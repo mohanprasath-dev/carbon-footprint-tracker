@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# Carbon Footprint Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A privacy-first React app that estimates your annual carbon footprint from a short lifestyle quiz and suggests personalised actions to reduce it. All processing happens in the browser — there is no backend and no data leaves your device.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
+npm run build
+npm test
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Security
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+This application is designed with a minimal attack surface:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Client-side only
+
+- The app runs entirely in the browser. Quiz answers and results are never sent to a server, third-party API, or analytics endpoint.
+- Persistence uses `localStorage` on the user's device only (`cft_quiz_results` key).
+
+### Content Security Policy (CSP)
+
+`index.html` sets a strict CSP meta tag for the production build:
+
+- `default-src 'self'` — only same-origin resources by default
+- `script-src 'self'` — no inline scripts or `unsafe-eval`
+- `style-src 'self' 'unsafe-inline'` — stylesheets from this origin; inline styles permitted for React/Vite runtime styling
+- `img-src 'self' data:` — local images and inline SVG/data URIs only
+- `connect-src 'self'` — no external network requests
+- `object-src 'none'`, `frame-ancestors 'none'` — blocks plugins and embedding
+
+### localStorage validation
+
+Data loaded from `localStorage` is parsed with `JSON.parse` and validated at runtime before use (`src/lib/storage.ts`). Each stored result must match the expected shape (string ID, numeric timestamp, complete quiz answers with string values, numeric totals and breakdown). Malformed, tampered, or version-mismatched data is rejected and the app falls back to an empty history rather than trusting an unchecked type cast.
+
+### Dependency audit
+
+Run `npm audit` before releases. The project targets zero known vulnerabilities in production dependencies.
+
+### Linting
+
+`eslint-plugin-security` is enabled to flag common JavaScript security anti-patterns during development.
+
+## Emission data sources
+
+Emission factors are drawn from DEFRA 2023, EPA inventories, IEA grid averages, and peer-reviewed dietary lifecycle research. See `src/data/emissionFactors.ts` for values and references.
