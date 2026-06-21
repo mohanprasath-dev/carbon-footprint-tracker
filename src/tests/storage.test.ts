@@ -36,6 +36,32 @@ describe('storage', () => {
       localStorage.setItem('cft_quiz_results', 'not-valid-json{{{');
       expect(loadResults()).toEqual([]);
     });
+
+    it('returns empty array when stored JSON has the wrong shape', () => {
+      localStorage.setItem('cft_quiz_results', JSON.stringify({ id: 'bad-shape' }));
+      expect(loadResults()).toEqual([]);
+    });
+
+    it('returns empty array when a stored result is missing required fields', () => {
+      localStorage.setItem(
+        'cft_quiz_results',
+        JSON.stringify([{ id: 'partial', timestamp: Date.now() }]),
+      );
+      expect(loadResults()).toEqual([]);
+    });
+
+    it('returns empty array when answers contain non-string values', () => {
+      localStorage.setItem(
+        'cft_quiz_results',
+        JSON.stringify([
+          {
+            ...mockResult(),
+            answers: { ...mockResult().answers, vehicle_type: 123 },
+          },
+        ]),
+      );
+      expect(loadResults()).toEqual([]);
+    });
   });
 
   describe('saveResult', () => {
