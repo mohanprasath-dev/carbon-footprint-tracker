@@ -23,11 +23,7 @@ export default defineConfig({
             return 'charts';
           }
 
-          if (
-            id.includes('react') ||
-            id.includes('react-dom') ||
-            id.includes('react-router-dom')
-          ) {
+          if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
             return 'vendor';
           }
 

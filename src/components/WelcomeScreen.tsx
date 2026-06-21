@@ -38,8 +38,8 @@ export function WelcomeScreen() {
         </h1>
 
         <p className="welcome__subtext">
-          Answer {totalQuestions} questions about your lifestyle and get a personalised estimate
-          of your annual CO₂ emissions — with actionable steps to reduce them.
+          Answer {totalQuestions} questions about your lifestyle and get a personalised estimate of
+          your annual CO₂ emissions — with actionable steps to reduce them.
         </p>
 
         <div className="welcome__cta-row">
@@ -52,9 +52,7 @@ export function WelcomeScreen() {
             <span>Start My Assessment</span>
             <span aria-hidden="true">→</span>
           </button>
-          <span className="welcome__eta">
-            ⏱ About 2 minutes
-          </span>
+          <span className="welcome__eta">⏱ About 2 minutes</span>
         </div>
       </section>
 
@@ -72,19 +70,27 @@ export function WelcomeScreen() {
 
       {/* Feature cards */}
       <section className="welcome__features" aria-labelledby="features-heading">
-        <h2 id="features-heading" className="sr-only">App features</h2>
+        <h2 id="features-heading" className="sr-only">
+          App features
+        </h2>
         <article className="welcome__feature-card">
-          <div className="welcome__feature-icon" aria-hidden="true">📊</div>
+          <div className="welcome__feature-icon" aria-hidden="true">
+            📊
+          </div>
           <h3>Science-based</h3>
           <p>Emission factors from DEFRA 2023, EPA, and peer-reviewed research.</p>
         </article>
         <article className="welcome__feature-card">
-          <div className="welcome__feature-icon" aria-hidden="true">🎯</div>
+          <div className="welcome__feature-icon" aria-hidden="true">
+            🎯
+          </div>
           <h3>Personalised</h3>
           <p>Recommendations ranked by your biggest impact areas, not generic tips.</p>
         </article>
         <article className="welcome__feature-card">
-          <div className="welcome__feature-icon" aria-hidden="true">🔒</div>
+          <div className="welcome__feature-icon" aria-hidden="true">
+            🔒
+          </div>
           <h3>Private</h3>
           <p>All data stays on your device. Zero tracking, zero accounts needed.</p>
         </article>

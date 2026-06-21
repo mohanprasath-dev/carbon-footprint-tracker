@@ -69,7 +69,14 @@ describe('calculateTransportEmissions', () => {
   });
 
   it('returns non-negative values for all vehicle types', () => {
-    const vehicleTypes = ['none', 'car_electric', 'car_hybrid', 'car_petrol', 'car_diesel', 'motorcycle'];
+    const vehicleTypes = [
+      'none',
+      'car_electric',
+      'car_hybrid',
+      'car_petrol',
+      'car_diesel',
+      'motorcycle',
+    ];
     vehicleTypes.forEach((vehicle_type) => {
       const result = calculateTransportEmissions({
         vehicle_type,
@@ -120,7 +127,14 @@ describe('calculateDietEmissions', () => {
   });
 
   it('returns positive values for all diet types', () => {
-    const dietTypes = ['vegan', 'vegetarian', 'pescatarian', 'meat_light', 'meat_medium', 'meat_heavy'];
+    const dietTypes = [
+      'vegan',
+      'vegetarian',
+      'pescatarian',
+      'meat_light',
+      'meat_medium',
+      'meat_heavy',
+    ];
     dietTypes.forEach((diet_type) => {
       const result = calculateDietEmissions({ diet_type, food_waste: 'low' });
       expect(result).toBeGreaterThan(0);
@@ -138,19 +152,34 @@ describe('calculateDietEmissions', () => {
 
 describe('calculateEnergyEmissions', () => {
   it('renewable electricity produces less than grid electricity', () => {
-    const renewable = calculateEnergyEmissions({ energy_source: 'renewable_electricity', home_size: 'medium_couple' });
-    const grid = calculateEnergyEmissions({ energy_source: 'electricity_grid', home_size: 'medium_couple' });
+    const renewable = calculateEnergyEmissions({
+      energy_source: 'renewable_electricity',
+      home_size: 'medium_couple',
+    });
+    const grid = calculateEnergyEmissions({
+      energy_source: 'electricity_grid',
+      home_size: 'medium_couple',
+    });
     expect(renewable).toBeLessThan(grid);
   });
 
   it('larger home with single occupant produces more per-person than shared flat', () => {
-    const shared = calculateEnergyEmissions({ energy_source: 'electricity_grid', home_size: 'tiny_shared' });
-    const largeSingle = calculateEnergyEmissions({ energy_source: 'electricity_grid', home_size: 'large_single' });
+    const shared = calculateEnergyEmissions({
+      energy_source: 'electricity_grid',
+      home_size: 'tiny_shared',
+    });
+    const largeSingle = calculateEnergyEmissions({
+      energy_source: 'electricity_grid',
+      home_size: 'large_single',
+    });
     expect(largeSingle).toBeGreaterThan(shared);
   });
 
   it('returns non-negative values', () => {
-    const result = calculateEnergyEmissions({ energy_source: 'renewable_electricity', home_size: 'tiny_shared' });
+    const result = calculateEnergyEmissions({
+      energy_source: 'renewable_electricity',
+      home_size: 'tiny_shared',
+    });
     expect(result).toBeGreaterThanOrEqual(0);
   });
 });
@@ -159,13 +188,22 @@ describe('calculateEnergyEmissions', () => {
 
 describe('calculateShoppingEmissions', () => {
   it('frequent shoppers produce more than rare shoppers', () => {
-    const rare = calculateShoppingEmissions({ shopping_clothing: 'rarely', shopping_electronics: 'rarely' });
-    const frequent = calculateShoppingEmissions({ shopping_clothing: 'very_often', shopping_electronics: 'very_often' });
+    const rare = calculateShoppingEmissions({
+      shopping_clothing: 'rarely',
+      shopping_electronics: 'rarely',
+    });
+    const frequent = calculateShoppingEmissions({
+      shopping_clothing: 'very_often',
+      shopping_electronics: 'very_often',
+    });
     expect(frequent).toBeGreaterThan(rare);
   });
 
   it('returns non-negative values', () => {
-    const result = calculateShoppingEmissions({ shopping_clothing: 'rarely', shopping_electronics: 'rarely' });
+    const result = calculateShoppingEmissions({
+      shopping_clothing: 'rarely',
+      shopping_electronics: 'rarely',
+    });
     expect(result).toBeGreaterThanOrEqual(0);
   });
 });
@@ -175,7 +213,11 @@ describe('calculateShoppingEmissions', () => {
 describe('calculateFootprint', () => {
   it('total equals sum of category emissions', () => {
     const result = calculateFootprint(defaultAnswers);
-    const expectedTotal = result.breakdown.transport + result.breakdown.diet + result.breakdown.energy + result.breakdown.shopping;
+    const expectedTotal =
+      result.breakdown.transport +
+      result.breakdown.diet +
+      result.breakdown.energy +
+      result.breakdown.shopping;
     expect(result.breakdown.total).toBeCloseTo(expectedTotal, 2);
   });
 

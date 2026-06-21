@@ -10,11 +10,7 @@
  *  - Poore & Nemecek (2018) "Reducing food's environmental impacts through producers and consumers"
  */
 
-import {
-  EMISSION_FACTORS,
-  FLIGHT_DISTANCES,
-  DRIVING_WEEKLY_KM,
-} from '@/data/emissionFactors';
+import { EMISSION_FACTORS, FLIGHT_DISTANCES, DRIVING_WEEKLY_KM } from '@/data/emissionFactors';
 
 export interface QuizAnswer {
   vehicle_type: string;
@@ -52,15 +48,18 @@ export interface FootprintResult {
 /**
  * Calculate annual transport emissions in kg CO2e.
  */
-export function calculateTransportEmissions(answers: Pick<QuizAnswer, 'vehicle_type' | 'driving_frequency' | 'public_transport' | 'flights'>): number {
+export function calculateTransportEmissions(
+  answers: Pick<QuizAnswer, 'vehicle_type' | 'driving_frequency' | 'public_transport' | 'flights'>,
+): number {
   // Driving
   const weeklyKm = DRIVING_WEEKLY_KM[answers.driving_frequency] ?? 0;
   const annualKm = weeklyKm * 52;
   const drivingFactor =
     answers.vehicle_type === 'none'
       ? 0
-      : (EMISSION_FACTORS.transport[answers.vehicle_type as keyof typeof EMISSION_FACTORS.transport] ??
-          EMISSION_FACTORS.transport.car_petrol);
+      : (EMISSION_FACTORS.transport[
+          answers.vehicle_type as keyof typeof EMISSION_FACTORS.transport
+        ] ?? EMISSION_FACTORS.transport.car_petrol);
   const drivingEmissions = annualKm * drivingFactor;
 
   // Public transport offset/addition
@@ -93,7 +92,9 @@ export function calculateTransportEmissions(answers: Pick<QuizAnswer, 'vehicle_t
 // ── Diet calculation ─────────────────────────────────────────────────────────
 
 /** Calculate annual diet emissions in kg CO2e. */
-export function calculateDietEmissions(answers: Pick<QuizAnswer, 'diet_type' | 'food_waste'>): number {
+export function calculateDietEmissions(
+  answers: Pick<QuizAnswer, 'diet_type' | 'food_waste'>,
+): number {
   const dietKey = answers.diet_type as keyof typeof EMISSION_FACTORS.diet;
   const dailyEmission = EMISSION_FACTORS.diet[dietKey] ?? EMISSION_FACTORS.diet.meat_medium;
   const annualDietEmissions = dailyEmission * 365;
@@ -113,7 +114,9 @@ export function calculateDietEmissions(answers: Pick<QuizAnswer, 'diet_type' | '
 // ── Energy calculation ───────────────────────────────────────────────────────
 
 /** Calculate annual home energy emissions in kg CO2e. */
-export function calculateEnergyEmissions(answers: Pick<QuizAnswer, 'energy_source' | 'home_size'>): number {
+export function calculateEnergyEmissions(
+  answers: Pick<QuizAnswer, 'energy_source' | 'home_size'>,
+): number {
   // Annual kWh per person based on home size and occupancy
   const annualKwhPerPerson: Record<string, number> = {
     tiny_shared: 800,
@@ -125,7 +128,8 @@ export function calculateEnergyEmissions(answers: Pick<QuizAnswer, 'energy_sourc
   const kwhUsed = annualKwhPerPerson[answers.home_size] ?? 2000;
 
   const energyKey = answers.energy_source as keyof typeof EMISSION_FACTORS.energy;
-  const energyFactor = EMISSION_FACTORS.energy[energyKey] ?? EMISSION_FACTORS.energy.electricity_grid;
+  const energyFactor =
+    EMISSION_FACTORS.energy[energyKey] ?? EMISSION_FACTORS.energy.electricity_grid;
 
   return kwhUsed * energyFactor;
 }
@@ -133,7 +137,9 @@ export function calculateEnergyEmissions(answers: Pick<QuizAnswer, 'energy_sourc
 // ── Shopping calculation ─────────────────────────────────────────────────────
 
 /** Calculate annual shopping/consumption emissions in kg CO2e. */
-export function calculateShoppingEmissions(answers: Pick<QuizAnswer, 'shopping_clothing' | 'shopping_electronics'>): number {
+export function calculateShoppingEmissions(
+  answers: Pick<QuizAnswer, 'shopping_clothing' | 'shopping_electronics'>,
+): number {
   // Clothing: annual spend equivalent (£)
   const clothingSpend: Record<string, number> = {
     rarely: 100,

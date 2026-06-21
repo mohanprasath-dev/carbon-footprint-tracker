@@ -16,7 +16,7 @@ export const QUESTIONS: Question[] = [
     text: 'What is your primary personal vehicle?',
     helpText: 'Choose the vehicle you drive most frequently.',
     options: [
-      { value: 'none', label: 'I don\'t own a car', icon: '🚶' },
+      { value: 'none', label: "I don't own a car", icon: '🚶' },
       { value: 'car_electric', label: 'Electric car', icon: '⚡' },
       { value: 'car_hybrid', label: 'Hybrid car', icon: '🌿' },
       { value: 'car_petrol', label: 'Petrol / gasoline car', icon: '⛽' },
@@ -96,7 +96,11 @@ export const QUESTIONS: Question[] = [
     category: 'energy',
     text: 'What is your main source of home energy?',
     options: [
-      { value: 'renewable_electricity', label: 'Renewable electricity (solar/wind tariff)', icon: '☀️' },
+      {
+        value: 'renewable_electricity',
+        label: 'Renewable electricity (solar/wind tariff)',
+        icon: '☀️',
+      },
       { value: 'electricity_grid', label: 'Standard grid electricity', icon: '🔌' },
       { value: 'heat_pump', label: 'Heat pump (air or ground source)', icon: '🌡️' },
       { value: 'natural_gas', label: 'Natural gas (central heating)', icon: '🔥' },
@@ -107,7 +111,7 @@ export const QUESTIONS: Question[] = [
     id: 'home_size',
     category: 'energy',
     text: 'How large is your home, and how many people share it?',
-    helpText: 'We\'ll use this to estimate your per-person energy use.',
+    helpText: "We'll use this to estimate your per-person energy use.",
     options: [
       { value: 'tiny_shared', label: 'Small flat / 3+ people sharing', icon: '🏠' },
       { value: 'medium_couple', label: 'Medium home / 2 people', icon: '🏡' },

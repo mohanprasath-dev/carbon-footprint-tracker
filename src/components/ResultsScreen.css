@@ -183,7 +183,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  transition: border-color var(--t-base), transform var(--t-base);
+  transition:
+    border-color var(--t-base),
+    transform var(--t-base);
 }
 
 .rec-card:hover {

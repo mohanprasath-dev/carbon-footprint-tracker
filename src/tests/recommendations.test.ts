@@ -72,7 +72,14 @@ describe('getRankedRecommendations', () => {
   });
 
   it('does not include already-adopted behaviors', () => {
-    const vegan = { ...baseAnswers, diet_type: 'vegan', energy_source: 'renewable_electricity', vehicle_type: 'none', driving_frequency: 'none', flights: 'none' };
+    const vegan = {
+      ...baseAnswers,
+      diet_type: 'vegan',
+      energy_source: 'renewable_electricity',
+      vehicle_type: 'none',
+      driving_frequency: 'none',
+      flights: 'none',
+    };
     const footprint = calculateFootprint(vegan);
     const recs = getRankedRecommendations(vegan, footprint);
     const ids = recs.map((r) => r.id);

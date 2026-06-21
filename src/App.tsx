@@ -16,7 +16,9 @@ function AppShell() {
       {/* Topnav */}
       <nav className="app-nav" aria-label="Site header">
         <div className="app-nav__logo" aria-label="CarbonClarity home">
-          <span className="app-nav__logo-icon" aria-hidden="true">🌿</span>
+          <span className="app-nav__logo-icon" aria-hidden="true">
+            🌿
+          </span>
           <span className="app-nav__logo-text">CarbonClarity</span>
         </div>
       </nav>
@@ -24,15 +26,15 @@ function AppShell() {
       {/* Page content */}
       <main className="app-main">
         {step === 'welcome' && <WelcomeScreen />}
-        {step === 'quiz'    && <QuizScreen />}
+        {step === 'quiz' && <QuizScreen />}
         {step === 'results' && <ResultsScreen />}
       </main>
 
       {/* Footer */}
       <footer className="app-footer">
         <p>
-          Emission factors from DEFRA 2023, EPA &amp; peer-reviewed research.
-          All data stays on your device.
+          Emission factors from DEFRA 2023, EPA &amp; peer-reviewed research. All data stays on your
+          device.
         </p>
       </footer>
     </>

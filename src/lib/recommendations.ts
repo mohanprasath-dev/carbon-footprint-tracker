@@ -119,8 +119,7 @@ const ALL_RECOMMENDATIONS: Recommendation[] = [
     id: 'meat_free_monday',
     category: 'diet',
     title: 'Have One Meat-Free Day Per Week',
-    description:
-      'Even one plant-based day a week saves approximately 200 kg CO2e annually.',
+    description: 'Even one plant-based day a week saves approximately 200 kg CO2e annually.',
     difficulty: 'easy',
     estimatedSavingKg: 200,
     impact: 'medium',
@@ -198,8 +197,7 @@ const ALL_RECOMMENDATIONS: Recommendation[] = [
     id: 'led_lighting',
     category: 'energy',
     title: 'Switch All Bulbs to LED',
-    description:
-      'LEDs use 75% less energy than incandescent bulbs and last 25× longer.',
+    description: 'LEDs use 75% less energy than incandescent bulbs and last 25× longer.',
     difficulty: 'easy',
     estimatedSavingKg: 50,
     impact: 'low',
@@ -271,7 +269,10 @@ export function scoreRecommendation(
   }
 
   // Suppress EV rec if user already has EV or no car
-  if (rec.id === 'switch_to_ev' && (answers.vehicle_type === 'car_electric' || answers.vehicle_type === 'none')) {
+  if (
+    rec.id === 'switch_to_ev' &&
+    (answers.vehicle_type === 'car_electric' || answers.vehicle_type === 'none')
+  ) {
     return 0;
   }
 
@@ -291,10 +292,7 @@ export function scoreRecommendation(
   }
 
   // Suppress renewable energy if already using it
-  if (
-    rec.id === 'switch_renewable' &&
-    answers.energy_source === 'renewable_electricity'
-  ) {
+  if (rec.id === 'switch_renewable' && answers.energy_source === 'renewable_electricity') {
     return 0;
   }
 
@@ -304,10 +302,7 @@ export function scoreRecommendation(
   }
 
   // Boost diet recs if diet is a major category contributor
-  if (
-    rec.category === 'diet' &&
-    footprint.breakdown.diet > footprint.breakdown.total * 0.4
-  ) {
+  if (rec.category === 'diet' && footprint.breakdown.diet > footprint.breakdown.total * 0.4) {
     relevanceBonus = 1.3;
   }
 

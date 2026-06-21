@@ -121,7 +121,9 @@
   border-radius: var(--r-lg);
   padding: var(--space-lg);
   text-align: center;
-  transition: border-color var(--t-base), transform var(--t-base);
+  transition:
+    border-color var(--t-base),
+    transform var(--t-base);
 }
 
 .welcome__feature-card:hover {
