@@ -56,9 +56,11 @@ export function calculateTransportEmissions(answers: Pick<QuizAnswer, 'vehicle_t
   // Driving
   const weeklyKm = DRIVING_WEEKLY_KM[answers.driving_frequency] ?? 0;
   const annualKm = weeklyKm * 52;
-  const vehicleKey = answers.vehicle_type as keyof typeof EMISSION_FACTORS.transport;
   const drivingFactor =
-    vehicleKey === 'none' ? 0 : (EMISSION_FACTORS.transport[vehicleKey] ?? EMISSION_FACTORS.transport.car_petrol);
+    answers.vehicle_type === 'none'
+      ? 0
+      : (EMISSION_FACTORS.transport[answers.vehicle_type as keyof typeof EMISSION_FACTORS.transport] ??
+          EMISSION_FACTORS.transport.car_petrol);
   const drivingEmissions = annualKm * drivingFactor;
 
   // Public transport offset/addition
