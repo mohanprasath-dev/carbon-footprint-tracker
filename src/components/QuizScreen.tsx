@@ -1,15 +1,17 @@
 import { useQuiz } from '@/context/QuizContext';
-import { QUESTIONS } from '@/data/questions';
+import { QUESTIONS, type Question } from '@/data/questions';
 import './QuizScreen.css';
 
-const CATEGORY_COLORS: Record<string, string> = {
+type QuestionCategory = Question['category'];
+
+const CATEGORY_COLORS: Record<QuestionCategory, string> = {
   transport: 'var(--c-transport)',
   diet: 'var(--c-diet)',
   energy: 'var(--c-energy)',
   shopping: 'var(--c-shopping)',
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
+const CATEGORY_LABELS: Record<QuestionCategory, string> = {
   transport: '🚗 Transport',
   diet: '🥗 Diet',
   energy: '⚡ Energy',
@@ -21,7 +23,7 @@ export function QuizScreen() {
 
   const question = QUESTIONS[currentQuestionIndex];
   const totalQuestions = QUESTIONS.length;
-  const progress = ((currentQuestionIndex) / totalQuestions) * 100;
+  const progress = (currentQuestionIndex / totalQuestions) * 100;
   const selectedValue = answers[question.id as keyof typeof answers];
 
   return (
@@ -51,19 +53,13 @@ export function QuizScreen() {
         aria-valuemax={totalQuestions}
         aria-label={`Question ${currentQuestionIndex + 1} of ${totalQuestions}`}
       >
-        <div
-          className="quiz__progress-fill"
-          style={{ width: `${progress}%` }}
-        />
+        <div className="quiz__progress-fill" style={{ width: `${progress}%` }} />
       </div>
 
       {/* Question card */}
       <main className="quiz__content container container--narrow">
         {/* Category tag */}
-        <div
-          className="quiz__category-tag"
-          style={{ color: CATEGORY_COLORS[question.category] }}
-        >
+        <div className="quiz__category-tag" style={{ color: CATEGORY_COLORS[question.category] }}>
           {CATEGORY_LABELS[question.category]}
         </div>
 
@@ -89,7 +85,6 @@ export function QuizScreen() {
                 className={`quiz__option ${isSelected ? 'quiz__option--selected' : ''}`}
                 onClick={() => answerQuestion(question.id, option.value)}
                 aria-pressed={isSelected}
-                role="button"
               >
                 {option.icon && (
                   <span className="quiz__option-icon" aria-hidden="true">
@@ -98,7 +93,9 @@ export function QuizScreen() {
                 )}
                 <span className="quiz__option-label">{option.label}</span>
                 {isSelected && (
-                  <span className="quiz__option-check" aria-hidden="true">✓</span>
+                  <span className="quiz__option-check" aria-hidden="true">
+                    ✓
+                  </span>
                 )}
               </button>
             );

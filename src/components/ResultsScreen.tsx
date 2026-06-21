@@ -1,32 +1,42 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuiz } from '@/context/QuizContext';
-import type { QuizAnswer, FootprintResult } from '@/lib/calculator';
+import type { QuizAnswer } from '@/lib/calculator';
 import { calculateFootprint, kgToTonnes } from '@/lib/calculator';
 import { getRankedRecommendations } from '@/lib/recommendations';
 import type { Recommendation } from '@/lib/recommendations';
-import { saveResult, generateId } from '@/lib/storage';
+import { persistFootprintResult } from '@/lib/storage';
 import { QUESTIONS } from '@/data/questions';
 import './ResultsScreen.css';
 
 const RATING_CONFIG = {
-  excellent: { label: 'Excellent', color: 'var(--c-excellent)', emoji: '🌟', bg: 'rgba(61,255,160,0.1)' },
-  good:      { label: 'Good',      color: 'var(--c-good)',      emoji: '😊', bg: 'rgba(134,239,172,0.1)' },
-  average:   { label: 'Average',   color: 'var(--c-average)',   emoji: '😐', bg: 'rgba(251,191,36,0.1)' },
-  high:      { label: 'High',      color: 'var(--c-high)',      emoji: '😟', bg: 'rgba(249,115,22,0.1)' },
-  very_high: { label: 'Very High', color: 'var(--c-very-high)', emoji: '😨', bg: 'rgba(239,68,68,0.1)' },
+  excellent: {
+    label: 'Excellent',
+    color: 'var(--c-excellent)',
+    emoji: '🌟',
+    bg: 'rgba(61,255,160,0.1)',
+  },
+  good: { label: 'Good', color: 'var(--c-good)', emoji: '😊', bg: 'rgba(134,239,172,0.1)' },
+  average: { label: 'Average', color: 'var(--c-average)', emoji: '😐', bg: 'rgba(251,191,36,0.1)' },
+  high: { label: 'High', color: 'var(--c-high)', emoji: '😟', bg: 'rgba(249,115,22,0.1)' },
+  very_high: {
+    label: 'Very High',
+    color: 'var(--c-very-high)',
+    emoji: '😨',
+    bg: 'rgba(239,68,68,0.1)',
+  },
 };
 
 const CATEGORY_CONFIG = {
   transport: { label: 'Transport', color: 'var(--c-transport)', icon: '🚗' },
-  diet:      { label: 'Diet',      color: 'var(--c-diet)',      icon: '🥗' },
-  energy:    { label: 'Energy',    color: 'var(--c-energy)',    icon: '⚡' },
-  shopping:  { label: 'Shopping',  color: 'var(--c-shopping)',  icon: '🛍️' },
+  diet: { label: 'Diet', color: 'var(--c-diet)', icon: '🥗' },
+  energy: { label: 'Energy', color: 'var(--c-energy)', icon: '⚡' },
+  shopping: { label: 'Shopping', color: 'var(--c-shopping)', icon: '🛍️' },
 };
 
 const DIFFICULTY_CONFIG = {
-  easy:   { label: 'Easy',   color: 'var(--c-excellent)' },
+  easy: { label: 'Easy', color: 'var(--c-excellent)' },
   medium: { label: 'Medium', color: 'var(--c-average)' },
-  hard:   { label: 'Hard',   color: 'var(--c-high)' },
+  hard: { label: 'Hard', color: 'var(--c-high)' },
 };
 
 function BreakdownBar({ value, total, color }: { value: number; total: number; color: string }) {
@@ -49,16 +59,24 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
   return (
     <article className="rec-card">
       <div className="rec-card__top">
-        <span className="rec-card__icon" aria-hidden="true">{rec.icon}</span>
+        <span className="rec-card__icon" aria-hidden="true">
+          {rec.icon}
+        </span>
         <div className="rec-card__meta">
-          <span className="rec-card__cat" style={{ color: catCfg.color }}>{catCfg.icon} {catCfg.label}</span>
-          <span className="rec-card__diff" style={{ color: diffCfg.color }}>{diffCfg.label}</span>
+          <span className="rec-card__cat" style={{ color: catCfg.color }}>
+            {catCfg.icon} {catCfg.label}
+          </span>
+          <span className="rec-card__diff" style={{ color: diffCfg.color }}>
+            {diffCfg.label}
+          </span>
         </div>
       </div>
       <h3 className="rec-card__title">{rec.title}</h3>
       <p className="rec-card__desc">{rec.description}</p>
       <div className="rec-card__saving">
-        <span className="rec-card__saving-value">↓ {Math.round(rec.estimatedSavingKg)} kg CO₂e/yr</span>
+        <span className="rec-card__saving-value">
+          ↓ {Math.round(rec.estimatedSavingKg)} kg CO₂e/yr
+        </span>
       </div>
     </article>
   );
@@ -66,31 +84,23 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
 
 export function ResultsScreen() {
   const { answers, resetQuiz } = useQuiz();
-  const [result, setResult] = useState<FootprintResult | null>(null);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const completeAnswers = answers as QuizAnswer;
+  const allAnswered = QUESTIONS.every((q) => answers[q.id as keyof typeof answers] !== undefined);
+
+  const result = useMemo(
+    () => (allAnswered ? calculateFootprint(completeAnswers) : null),
+    [allAnswered, completeAnswers],
+  );
+
+  const recommendations = useMemo(
+    () => (result ? getRankedRecommendations(completeAnswers, result, 6) : []),
+    [completeAnswers, result],
+  );
 
   useEffect(() => {
-    const allAnswered = QUESTIONS.every((q) => answers[q.id as keyof typeof answers] !== undefined);
-    if (!allAnswered) return;
-    const completeAnswers = answers as QuizAnswer;
-    const fp = calculateFootprint(completeAnswers);
-    const recs = getRankedRecommendations(completeAnswers, fp, 6);
-    saveResult({
-      id: generateId(),
-      timestamp: Date.now(),
-      answers: completeAnswers,
-      totalKgCO2e: fp.breakdown.total,
-      breakdownKg: {
-        transport: fp.breakdown.transport,
-        diet: fp.breakdown.diet,
-        energy: fp.breakdown.energy,
-        shopping: fp.breakdown.shopping,
-      },
-    });
-    setResult(fp);
-    setRecommendations(recs);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!result) return;
+    persistFootprintResult(completeAnswers, result);
+  }, [completeAnswers, result]);
 
   if (!result) {
     return (
@@ -112,7 +122,11 @@ export function ResultsScreen() {
         <section className="results__hero" aria-labelledby="results-heading">
           <div
             className="results__rating-badge"
-            style={{ color: ratingCfg.color, background: ratingCfg.bg, borderColor: ratingCfg.color }}
+            style={{
+              color: ratingCfg.color,
+              background: ratingCfg.bg,
+              borderColor: ratingCfg.color,
+            }}
           >
             <span aria-hidden="true">{ratingCfg.emoji}</span> {ratingCfg.label}
           </div>

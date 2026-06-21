@@ -1,7 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { QuizAnswer, FootprintResult } from '@/lib/calculator';
-import { calculateFootprint } from '@/lib/calculator';
-import { saveResult, generateId } from '@/lib/storage';
+import type { QuizAnswer } from '@/lib/calculator';
 import { QUESTIONS } from '@/data/questions';
 
 export type QuizStep = 'welcome' | 'quiz' | 'results';
@@ -10,14 +8,12 @@ interface QuizState {
   step: QuizStep;
   currentQuestionIndex: number;
   answers: Partial<QuizAnswer>;
-  result: FootprintResult | null;
 }
 
 interface QuizActions {
   startQuiz: () => void;
   answerQuestion: (questionId: string, value: string) => void;
   goBack: () => void;
-  submitQuiz: () => void;
   resetQuiz: () => void;
 }
 
@@ -30,7 +26,6 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     step: 'welcome',
     currentQuestionIndex: 0,
     answers: {},
-    result: null,
   });
 
   const startQuiz = useCallback(() => {
@@ -39,7 +34,6 @@ export function QuizProvider({ children }: { children: ReactNode }) {
       step: 'quiz',
       currentQuestionIndex: 0,
       answers: {},
-      result: null,
     }));
   }, []);
 
@@ -70,47 +64,22 @@ export function QuizProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const submitQuiz = useCallback(() => {
-    setState((prev) => {
-      const completeAnswers = prev.answers as QuizAnswer;
-      const result = calculateFootprint(completeAnswers);
-
-      // Persist to localStorage
-      saveResult({
-        id: generateId(),
-        timestamp: Date.now(),
-        answers: completeAnswers,
-        totalKgCO2e: result.breakdown.total,
-        breakdownKg: {
-          transport: result.breakdown.transport,
-          diet: result.breakdown.diet,
-          energy: result.breakdown.energy,
-          shopping: result.breakdown.shopping,
-        },
-      });
-
-      return { ...prev, result, step: 'results' };
-    });
-  }, []);
-
   const resetQuiz = useCallback(() => {
     setState({
       step: 'welcome',
       currentQuestionIndex: 0,
       answers: {},
-      result: null,
     });
   }, []);
 
   return (
-    <QuizContext.Provider
-      value={{ ...state, startQuiz, answerQuestion, goBack, submitQuiz, resetQuiz }}
-    >
+    <QuizContext.Provider value={{ ...state, startQuiz, answerQuestion, goBack, resetQuiz }}>
       {children}
     </QuizContext.Provider>
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- paired hook for QuizProvider
 export function useQuiz(): QuizContextValue {
   const ctx = useContext(QuizContext);
   if (!ctx) throw new Error('useQuiz must be used inside <QuizProvider>');
