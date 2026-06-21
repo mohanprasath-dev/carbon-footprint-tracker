@@ -1,0 +1,157 @@
+.welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2xl) var(--space-lg);
+  gap: var(--space-xl);
+}
+
+/* Hero */
+.welcome__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 640px;
+  gap: var(--space-md);
+}
+
+.welcome__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--c-primary-dim);
+  border: 1px solid var(--c-primary-glow);
+  color: var(--c-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--r-full);
+  letter-spacing: 0.02em;
+}
+
+.welcome__badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  animation: pulse 2s infinite;
+}
+
+.welcome__headline {
+  margin: var(--space-md) 0 0;
+  line-height: 1.1;
+}
+
+.welcome__headline-accent {
+  color: var(--c-primary);
+  position: relative;
+}
+
+.welcome__subtext {
+  font-size: 1.0625rem;
+  color: var(--c-text);
+  max-width: 500px;
+  line-height: 1.7;
+  margin-top: var(--space-sm);
+}
+
+.welcome__cta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--space-sm);
+}
+
+.welcome__cta {
+  font-size: 1.0625rem;
+  padding: 14px 36px;
+}
+
+.welcome__eta {
+  font-size: 0.875rem;
+  color: var(--c-text-muted);
+}
+
+/* Category pills */
+.welcome__categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.welcome__category-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-full);
+  padding: 8px 18px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--c-text);
+  transition: border-color var(--t-fast);
+}
+
+.welcome__category-pill:hover {
+  border-color: var(--c-primary-glow);
+}
+
+.welcome__category-icon {
+  font-size: 1rem;
+}
+
+/* Feature cards */
+.welcome__features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 800px;
+}
+
+.welcome__feature-card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--space-lg);
+  text-align: center;
+  transition: border-color var(--t-base), transform var(--t-base);
+}
+
+.welcome__feature-card:hover {
+  border-color: var(--c-primary-glow);
+  transform: translateY(-2px);
+}
+
+.welcome__feature-icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-sm);
+}
+
+.welcome__feature-card h3 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.welcome__feature-card p {
+  font-size: 0.875rem;
+  color: var(--c-text-muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .welcome__features {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome {
+    padding: var(--space-xl) var(--space-md);
+    gap: var(--space-lg);
+  }
+}
